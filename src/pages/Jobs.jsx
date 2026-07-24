@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Filter, X, ArrowUpRight, Briefcase } from "lucide-react";
+import { MapPin, Calendar, Search, Filter, X, ArrowUpRight, Briefcase, ShieldCheck, Home as HomeIcon, Bus, FileText, DollarSign } from "lucide-react";
 import servicesHero from "../assets/services-hero.jpg";
 import PageShell from "../components/PageShell.jsx";
 import Hero from "../components/Hero.jsx";
@@ -8,8 +8,69 @@ import SectionHeader from "../components/SectionHeader.jsx";
 import Breadcrumbs from "../components/Breadcrumbs.jsx";
 import CTASection from "../components/CTASection.jsx";
 import SEO from "../components/SEO.jsx";
-import JobCard from "../components/JobCard.jsx";
 import { apiGet } from "../lib/api";
+
+const perkIcon = {
+  "Visa Support": ShieldCheck,
+  "Accommodation": HomeIcon,
+  "Transport": Bus,
+};
+
+function JobCard({ job, index, onViewDetails }) {
+  const perks = Array.isArray(job.perks) ? job.perks : [];
+
+  return (
+    <article className="group relative flex flex-col rounded-sm border border-border bg-card p-8 hover:border-gold transition-all hover:-translate-y-1">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Calendar className="h-3.5 w-3.5 text-gold" />
+          <span>{job.date || new Date(job.createdAt || Date.now()).toLocaleDateString()}</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs font-medium text-navy">
+          <MapPin className="h-3.5 w-3.5 text-gold" />
+          <span>{job.country}</span>
+        </div>
+      </div>
+
+      <div className="2">
+        <div className="font-serif text-4xl text-muted-foreground/30 group-hover:text-gold transition-colors">
+          {String(index + 1).padStart(2, "0")}
+        </div>
+        <div className="mt-2 text-[10px] uppercase tracking-[0.25em] text-gold">{job.category}</div>
+        <h3 className="mt-3 font-serif text-2xl text-navy leading-tight">{job.title}</h3>
+        <div className="mt-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">SDB Group</div>
+      </div>
+
+      <p className="mt-5 text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-3">{job.description}</p>
+
+      {perks.length > 0 && (
+        <div className="mt-6 flex flex-wrap gap-2">
+          {perks.map((p) => {
+            const Icon = perkIcon[p] || ShieldCheck;
+            return (
+              <span key={p} className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-muted/40 px-2.5 py-1 text-[11px] text-navy">
+                <Icon className="h-3 w-3 text-gold" /> {p}
+              </span>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="mt-8 flex items-center justify-between border-t border-border pt-6">
+        <div>
+          <div className="font-serif text-xl text-navy">{job.salary}</div>
+          <div className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">per month</div>
+        </div>
+        <button 
+          onClick={() => onViewDetails(job._id || job.id)} 
+          className="inline-flex items-center gap-2 rounded-sm bg-navy px-4 py-2.5 text-xs font-medium text-ivory hover:bg-navy/90 transition-all"
+        >
+          View Details <ArrowUpRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </article>
+  );
+}
 
 function CheckboxRow({ label, checked, onChange, count }) {
   return (
