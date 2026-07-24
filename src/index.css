@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 60 33% 97%;
+  --foreground: 224 40% 15%;
+  --card: 0 0% 100%;
+  --border: 40 15% 88%;
+  --muted: 40 20% 95%;
+  --muted-foreground: 224 15% 45%;
+  --navy: 224 40% 18%;
+  --navy-foreground: 60 33% 97%;
+  --ivory: 60 33% 97%;
+  --gold: 38 55% 55%;
+  --gold-foreground: 224 40% 18%;
+}
+
+@layer base {
+  html { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  html, body { max-width: 100%; overflow-x: clip; }
+  body { background: hsl(var(--background)); color: hsl(var(--foreground)); }
+  img, svg, video { max-width: 100%; height: auto; }
+  h1, h2, h3, h4 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; letter-spacing: -0.02em; color: hsl(var(--navy)); }
+  h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.05; }
+  h2 { font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.1; }
+  h3 { font-size: clamp(1.5rem, 2vw, 1.875rem); line-height: 1.2; }
+  ::selection { background: hsl(var(--gold)); color: hsl(var(--navy)); }
+}
+
+/* Responsive fine-tuning beyond Tailwind's default breakpoints */
+@media (max-width: 640px) {
+  .container-page { padding-left: 1rem; padding-right: 1rem; }
+  .btn-primary, .btn-gold, .btn-outline-ivory { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 380px) {
+  h1 { font-size: clamp(2rem, 9vw, 2.75rem); }
+  .eyebrow { font-size: 0.65rem; }
+}
+
+@layer components {
+  .container-page { @apply w-full max-w-[1280px] mx-auto px-6; }
+  .eyebrow { @apply inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-gold; }
+  .btn-primary { @apply inline-flex items-center gap-2 rounded-sm bg-navy px-7 py-4 text-sm font-medium text-ivory transition-all hover:bg-navy/90; }
+  .btn-gold { @apply inline-flex items-center gap-2 rounded-sm bg-gold px-7 py-4 text-sm font-medium text-navy transition-all hover:shadow-[0_10px_40px_-10px_hsl(var(--gold)/0.4)]; }
+  .btn-outline-ivory { @apply inline-flex items-center gap-2 rounded-sm border border-ivory/40 bg-ivory/5 backdrop-blur-md px-7 py-4 text-sm font-medium text-ivory hover:bg-ivory hover:text-navy transition-all; }
+
+  /* Styles the raw HTML saved from the admin rich-text editor (blog post
+     body). Written by hand to match the rest of the site's editorial
+     typography, since @tailwindcss/typography isn't installed here. */
+  .blog-content { @apply text-lg text-muted-foreground leading-relaxed; }
+  .blog-content > * + * { @apply mt-6; }
+  .blog-content h2 { @apply text-navy mt-4; font-size: clamp(1.75rem, 3vw, 2.25rem); }
+  .blog-content h3 { @apply text-navy mt-2; }
+  .blog-content h4 { @apply text-navy text-xl mt-2; }
+  .blog-content p { @apply leading-relaxed; }
+  .blog-content strong { @apply text-navy font-semibold; }
+  .blog-content a { @apply text-gold underline underline-offset-2 hover:text-navy transition-colors; }
+  .blog-content ul { @apply list-disc pl-6 space-y-2; }
+  .blog-content ol { @apply list-decimal pl-6 space-y-2; }
+  .blog-content li { @apply leading-relaxed; }
+  .blog-content li > ul, .blog-content li > ol { @apply mt-2; }
+  .blog-content blockquote { @apply border-l-2 border-gold pl-6 italic text-navy/80 my-8; }
+  .blog-content img { @apply rounded-sm my-8 w-full h-auto shadow-sm; }
+  .blog-content pre { @apply bg-navy text-ivory text-sm rounded-sm p-5 overflow-x-auto my-8; }
+  .blog-content code { @apply bg-muted text-navy text-[0.9em] rounded-sm px-1.5 py-0.5; }
+  .blog-content pre code { @apply bg-transparent text-inherit p-0; }
+  .blog-content table { @apply w-full border-collapse text-sm my-8; }
+  .blog-content th, .blog-content td { @apply border border-border px-4 py-2 text-left; }
+  .blog-content th { @apply bg-ivory text-navy font-semibold; }
+  .blog-content hr { @apply border-border my-10; }
+}
+
+@keyframes fade-rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.animate-rise { animation: fade-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
