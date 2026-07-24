@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Pencil, Trash2, ShieldCheck, Home as HomeIcon, Bus, Users } from "lucide-react";
+import { Plus, Pencil, Trash2, ShieldCheck, Home as HomeIcon, Bus, Users, Image as ImageIcon } from "lucide-react";
 import { apiGet, apiPost, apiPut, apiDelete } from "../../lib/api";
 import { useToast } from "../../context/ToastContext.jsx";
 import DataTable from "../../components/admin/DataTable.jsx";
 import Modal from "../../components/admin/Modal.jsx";
 import ConfirmDialog from "../../components/admin/ConfirmDialog.jsx";
+import MediaPickerModal from "../../components/admin/MediaPickerModal.jsx";
+
+const BASE = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
+
+function resolveImageSrc(image) {
+  if (!image) return "";
+  return image.startsWith("/api/") ? `${BASE}${image}` : image;
+}
 
 const perkIcon = { "Visa Support": ShieldCheck, Accommodation: HomeIcon, Transport: Bus };
 const targetCountries = window.jobCountries || ["UAE", "Qatar", "Saudi Arabia", "Germany", "Poland"];
 const targetCategories = window.jobCategories || ["Construction", "Hospitality", "Logistics", "Healthcare", "Engineering"];
 
-const emptyForm = { title: "", category: "", country: "", description: "", salary: "", salaryValue: "", perks: [] };
+const emptyForm = { title: "", category: "", country: "", description: "", salary: "", salaryValue: "", image: "", perks: [] };
 
 export default function JobsAdmin() {
   const { show } = useToast();
@@ -22,6 +30,7 @@ export default function JobsAdmin() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
     fetchJobs();
@@ -54,6 +63,7 @@ export default function JobsAdmin() {
       description: job.description || "",
       salary: job.salary || "",
       salaryValue: job.salaryValue ?? "",
+      image: job.image || "",
       perks: Array.isArray(job.perks) ? job.perks : [],
     });
     setModalOpen(true);
@@ -227,6 +237,25 @@ export default function JobsAdmin() {
           </div>
 
           <div>
+            <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1.5">Job Photo</label>
+            {form.image ? (
+              <img src={resolveImageSrc(form.image)} alt="" className="w-full aspect-[16/10] object-cover rounded border border-gray-200 dark:border-gray-700 mb-2" />
+            ) : (
+              <div className="w-full aspect-[16/10] rounded border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center text-gray-300 mb-2">
+                <ImageIcon className="w-6 h-6" />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => setPickerOpen(true)}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+            >
+              <ImageIcon className="w-4 h-4" /> {form.image ? "Change Photo" : "Choose from Media Library"}
+            </button>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Optional — shown on the job card on the Jobs page and homepage. Falls back to a placeholder icon if left blank.</p>
+          </div>
+
+          <div>
             <label className="block text-xs font-bold uppercase text-gray-500 dark:text-gray-400 mb-1.5">Company Subsidies</label>
             <div className="flex flex-wrap gap-4 pt-1">
               {Object.keys(perkIcon).map((perk) => (
@@ -268,6 +297,15 @@ export default function JobsAdmin() {
         message="This will permanently remove the listing from the public jobs page."
         onConfirm={handleDelete}
         onCancel={() => setConfirmTarget(null)}
+      />
+
+      <MediaPickerModal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={(file) => {
+          setForm((f) => ({ ...f, image: file.url }));
+          setPickerOpen(false);
+        }}
       />
     </div>
   );
