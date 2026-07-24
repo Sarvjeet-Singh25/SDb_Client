@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, MapPin, User, MessageSquare, Tag } from "luci
 import heroImage from "../assets/hero-dubai.jpg";
 import mapImage from "../assets/countries-hero.jpg";
 import aboutImage from "../assets/about-hero.jpg";
+import FeaturedJobs from "./FeaturedJobs";
 
 const BASE = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
 
@@ -102,7 +103,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container-page py-24 md:py-30">
+      <section className="container-page  border-b py-24 md:py-30">
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
           <div>
             <div className="eyebrow mb-5">Who we are</div>
@@ -133,6 +134,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <FeaturedJobs />
 
       <section className="bg-navy py-19">
         <div className="container-page"><StatGrid stats={stats} dark /></div>
